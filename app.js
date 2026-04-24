@@ -485,7 +485,21 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 //MAIN EVENT LISTENERS 
-document.getElementById('searchInput').addEventListener('input', renderNotes);
+
+// show/hide clear button
+document.getElementById('searchInput').addEventListener('input', () => {
+  const val = document.getElementById('searchInput').value;
+  document.getElementById('searchClear').classList.toggle('visible', val.length > 0);
+  renderNotes();
+});
+
+// clear search
+document.getElementById('searchClear').addEventListener('click', () => {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchClear').classList.remove('visible');
+  renderNotes();
+});
+
 document.getElementById('sortSelect').addEventListener('change', renderNotes);
 document.getElementById('newNoteBtn').addEventListener('click', () => openModal(null));
 
