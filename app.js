@@ -150,7 +150,7 @@ function renderNoteCard(note, grid) {
         data-action="delete" title="Delete">🗑</button>
     </div>
     <div class="note-card-title">${escHtml(note.title) || 'Untitled'}</div>
-    <div class="note-card-body">${escHtml(note.content)}</div>
+    <div class="note-card-body">${marked.parse(note.content)}</div>
     <div class="note-card-footer">
       <span class="note-card-date">${formatDate(note.updatedAt)}</span>
       <div class="note-card-tags">${tagBadges}</div>
