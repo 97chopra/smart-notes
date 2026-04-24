@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Notes</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- APP WRAPPER -->
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon">🧠</span>
+          <span class="logo-text">Smart Notes</span>
+        </div>
+      </div>
+
+      <div class="search-wrap">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search notes..." autocomplete="off" />
+      </div>
+
+      <nav class="sidebar-nav">
+        <p class="nav-section-label">Views</p>
+        <div class="nav-item active" data-filter="all">All Notes</div>
+        <div class="nav-item" data-filter="pinned">Pinned</div>
+        <div class="nav-item" data-filter="recent">Recent</div>
+        <p class="nav-section-label">Tags</p>
+        <div id="tagsList"></div>
+      </nav>
+
+      <button class="new-note-btn" id="newNoteBtn">+ New Note</button>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <main class="main">
+      <div class="topbar">
+        <h1 class="topbar-title" id="viewTitle">All Notes</h1>
+        <div class="topbar-controls">
+          <select id="sortSelect">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="alpha">A → Z</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="notes-grid" id="notesGrid"></div>
+    </main>
+
+  </div>
+
+  <!-- NOTE EDITOR MODAL -->
+  <div class="modal-overlay" id="noteModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle">New Note</h2>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="noteTitle" class="note-title-input" placeholder="Note title..." />
+        <div class="editor-tabs">
+          <button class="tab-btn active" data-tab="write">Write</button>
+          <button class="tab-btn" data-tab="preview">Preview</button>
+        </div>
+        <textarea id="noteContent" class="note-content-input" placeholder="Write your note in Markdown..."></textarea>
+        <div id="notePreview" class="note-preview hidden"></div>
+        <div class="modal-meta">
+          <div class="color-picker" id="colorPicker"></div>
+          <div class="tag-input-wrap">
+            <input type="text" id="tagInput" placeholder="Add tag..." />
+            <button id="addTagBtn">Add</button>
+          </div>
+          <div id="tagsPreview"></div>
+        </div>
+        <!-- AI ACTIONS (wired up in Phase 4) -->
+        <div class="ai-toolbar">
+          <button class="ai-btn" id="aiSummariseBtn">✦ Summarise</button>
+          <button class="ai-btn" id="aiTagsBtn">✦ Suggest Tags</button>
+          <button class="ai-btn" id="aiRewriteBtn">✦ Improve</button>
+        </div>
+        <div id="aiOutput" class="ai-output hidden"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="exportBtn">Export</button>
+        <div>
+          <button class="btn-secondary" id="cancelBtn">Cancel</button>
+          <button class="btn-primary" id="saveBtn">Save Note</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRM MODAL -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal modal-sm">
+      <h3>Delete this note?</h3>
+      <p>This cannot be undone.</p>
+      <div class="confirm-actions">
+        <button class="btn-secondary" id="cancelDeleteBtn">Cancel</button>
+        <button class="btn-danger" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="ai.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
