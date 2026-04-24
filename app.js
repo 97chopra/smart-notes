@@ -533,8 +533,8 @@ document.getElementById('exportBtn').addEventListener('click', () => {
 //KEYBOARD SHORTCUTS 
 document.addEventListener('keydown', e => {
 
-  // Ctrl+N → new note
-  if (e.ctrlKey && e.key === 'n') {
+  // Ctrl+M → new note 
+  if (e.ctrlKey && e.key === 'm') {
     e.preventDefault();
     openModal(null);
   }
