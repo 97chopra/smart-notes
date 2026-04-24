@@ -72,9 +72,9 @@ const CONFIG = {
 };
 ```
 
-3. Open `index.html` in your browser — done! ✅
+3. Open `index.html` in your browser — done! 
 
-> ⚠️ `config.js` is in `.gitignore` and will never be pushed to GitHub.
+>  `config.js` is in `.gitignore` and will never be pushed to GitHub.
 > The app works without AI features if no key is provided.
 
 ---
