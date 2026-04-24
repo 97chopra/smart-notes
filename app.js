@@ -509,15 +509,23 @@ document.querySelectorAll('.nav-item').forEach(item => {
     setFilter(item.dataset.filter, labels[item.dataset.filter]);
   });
 });
-// export button placeholder
+// export button
 document.getElementById('exportBtn').addEventListener('click', () => {
-  const title   = document.getElementById('noteTitle').value || 'note';
+  const title   = document.getElementById('noteTitle').value.trim() || 'note';
   const content = document.getElementById('noteContent').value;
-  const blob    = new Blob([content], { type: 'text/plain' });
-  const a       = document.createElement('a');
-  a.href        = URL.createObjectURL(blob);
-  a.download    = `${title}.txt`;
+
+  if (!content) { alert('Nothing to export!'); return; }
+
+  // ask user for format
+  const format = confirm('Click OK for Markdown (.md)\nClick Cancel for Plain Text (.txt)')
+    ? 'md' : 'txt';
+
+  const blob = new Blob([content], { type: 'text/plain' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = `${title}.${format}`;
   a.click();
+  URL.revokeObjectURL(a.href);
 });
 //INIT
 loadNotes();
