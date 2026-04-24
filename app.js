@@ -483,6 +483,7 @@ document.getElementById('confirmModal').addEventListener('click', e => {
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => switchTab(btn.dataset.tab));
 });
+document.getElementById('aiSummariseBtn').addEventListener('click', aiSummarise);
 
 //MAIN EVENT LISTENERS 
 
