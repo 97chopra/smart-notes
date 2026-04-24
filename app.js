@@ -530,6 +530,30 @@ document.getElementById('exportBtn').addEventListener('click', () => {
   a.click();
   URL.revokeObjectURL(a.href);
 });
+//KEYBOARD SHORTCUTS 
+document.addEventListener('keydown', e => {
+
+  // Ctrl+N → new note
+  if (e.ctrlKey && e.key === 'n') {
+    e.preventDefault();
+    openModal(null);
+  }
+
+  // Ctrl+S → save note (when modal is open)
+  if (e.ctrlKey && e.key === 's') {
+    e.preventDefault();
+    const modalOpen = document.getElementById('noteModal').classList.contains('open');
+    if (modalOpen) saveNote();
+  }
+
+  // Escape → close any open modal
+  if (e.key === 'Escape') {
+    const modalOpen   = document.getElementById('noteModal').classList.contains('open');
+    const confirmOpen = document.getElementById('confirmModal').classList.contains('open');
+    if (modalOpen)   closeModal();
+    if (confirmOpen) closeConfirmModal();
+  }
+});
 //INIT
 loadNotes();
 renderNotes();

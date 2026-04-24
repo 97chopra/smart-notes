@@ -180,7 +180,7 @@ body {
   border-left-color: var(--accent);
 }
 
-/* ── TAG CHIPS IN SIDEBAR ── */
+/*  TAG CHIPS IN SIDEBAR ── */
 .tag-chip {
   display: flex;
   align-items: center;
@@ -772,3 +772,49 @@ body {
 
 /* ── UTILITY ── */
 .hidden { display: none !important; }
+/* ── POLISH ── */
+
+/* smooth transition on all cards */
+.note-card {
+  transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.note-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* ai button pulse animation */
+.ai-btn:not(:disabled):hover {
+  animation: pulse 0.6s ease;
+}
+
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(124, 106, 247, 0.4); }
+  70%  { box-shadow: 0 0 0 8px rgba(124, 106, 247, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(124, 106, 247, 0); }
+}
+
+/* pinned card glow */
+.note-card.pinned {
+  box-shadow: 0 0 0 1px var(--accent), 0 4px 16px rgba(124, 106, 247, 0.15);
+}
+
+/* modal body smooth scroll */
+.modal-body {
+  scroll-behavior: smooth;
+}
+
+/* tag chips hover in sidebar */
+.tag-chip {
+  transition: background 0.15s, color 0.15s;
+}
+
+/* note card body no markdown symbols */
+.note-card-body p { margin: 0; }
+.note-card-body h1,
+.note-card-body h2,
+.note-card-body h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
