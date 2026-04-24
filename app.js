@@ -251,13 +251,27 @@ function filterByTag(tag) {
   renderNotes();
 }
 
-// TOGGLE PIN
+//PIN & COLOR 
+
 function togglePin(id) {
   const note = notes.find(n => n.id === id);
   if (note) {
     note.pinned = !note.pinned;
     saveNotes();
     renderNotes();
+  }
+}
+
+function applyColor(colorName) {
+  selectedColor = colorName;
+  buildColorPicker();
+
+  if (editingId) {
+    const note = notes.find(n => n.id === editingId);
+    if (note) {
+      note.color = colorName;
+      saveNotes();
+    }
   }
 }
 
@@ -369,11 +383,18 @@ function addTag() {
   const val   = input.value.trim().toLowerCase().replace(/\s+/g, '-');
 
   if (!val) return;
-  if (currentTags.includes(val)) { input.value = ''; return; }
-  if (currentTags.length >= 5)   { alert('Max 5 tags per note.'); return; }
+  if (currentTags.includes(val)) {
+    input.value = '';
+    return;
+  }
+  if (currentTags.length >= 5) {
+    alert('Max 5 tags per note.');
+    return;
+  }
 
   currentTags.push(val);
   input.value = '';
+  input.focus();
   renderTagsPreview();
 }
 
