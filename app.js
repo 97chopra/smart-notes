@@ -251,6 +251,11 @@ function filterByTag(tag) {
   renderNotes();
 }
 
+//MODAL STATE 
+let editingId     = null;
+let currentTags   = [];
+let selectedColor = 'none';
+
 //PIN & COLOR 
 
 function togglePin(id) {
@@ -274,11 +279,6 @@ function applyColor(colorName) {
     }
   }
 }
-
-//MODAL STATE 
-let editingId     = null;
-let currentTags   = [];
-let selectedColor = 'none';
 
 // OPEN MODAL 
 function openModal(id) {
@@ -359,21 +359,21 @@ function saveNote() {
 function buildColorPicker() {
   const picker = document.getElementById('colorPicker');
   picker.innerHTML = NOTE_COLORS.map(c => {
-    const bg       = c.hex || 'var(--surface3)';
-    const selected = selectedColor === c.name ? 'selected' : '';
-    const border   = c.hex ? '' : 'border: 2px dashed var(--border2);';
-    return `<div class="color-swatch ${selected}"
-      style="background:${bg};${border}"
+    const bg         = c.hex || 'var(--surface3)';
+    const isSelected = selectedColor === c.name;
+    const border     = isSelected
+      ? 'border: 3px solid var(--text);'
+      : c.hex ? 'border: 2px solid transparent;' : 'border: 2px dashed var(--border2);';
+    return `<div
+      class="color-swatch"
+      style="background:${bg};${border};transform:${isSelected ? 'scale(1.2)' : 'scale(1)'};transition:all 0.15s;"
       data-color="${c.name}"
       title="${c.name}">
     </div>`;
   }).join('');
 
   picker.querySelectorAll('.color-swatch').forEach(swatch => {
-    swatch.addEventListener('click', () => {
-      selectedColor = swatch.dataset.color;
-      buildColorPicker();
-    });
+    swatch.addEventListener('click', () => applyColor(swatch.dataset.color));
   });
 }
 
