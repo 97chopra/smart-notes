@@ -484,6 +484,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => switchTab(btn.dataset.tab));
 });
 document.getElementById('aiSummariseBtn').addEventListener('click', aiSummarise);
+document.getElementById('aiTagsBtn').addEventListener('click', aiSuggestTags);
 
 //MAIN EVENT LISTENERS 
 

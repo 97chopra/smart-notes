@@ -84,8 +84,60 @@ ${content}`;
   }
 }
 
-// AI SUGGEST TAGS (placeholder for commit #13)
-async function aiSuggestTags() {}
+//AI SUGGEST TAGS
+async function aiSuggestTags() {
+  const content = document.getElementById('noteContent').value.trim();
+  const title   = document.getElementById('noteTitle').value.trim();
+
+  if (!content && !title) {
+    alert('Please write some content first!');
+    return;
+  }
+
+  setAiLoading('aiTagsBtn', true);
+
+  try {
+    const prompt = `Suggest 3-5 short, relevant tags for this note. 
+Return ONLY a JSON array of strings, nothing else. 
+Example: ["javascript", "learning", "web-dev"]
+
+Title: ${title}
+Content: ${content}`;
+
+    const result  = await callGroq(prompt);
+    const cleaned = result.replace(/```json|```/g, '').trim();
+    const tags    = JSON.parse(cleaned);
+
+    // show suggested tags as clickable chips
+    const suggestHtml = tags.map(tag => `
+      <span onclick="applySuggestedTag('${tag}')"
+        style="display:inline-flex;align-items:center;gap:5px;
+        background:rgba(124,106,247,0.15);color:#a99df9;
+        padding:4px 12px;border-radius:20px;font-size:12px;
+        cursor:pointer;border:1px solid rgba(124,106,247,0.3);
+        margin:3px;transition:background 0.15s;"
+        onmouseover="this.style.background='rgba(124,106,247,0.3)'"
+        onmouseout="this.style.background='rgba(124,106,247,0.15)'">
+        + ${tag}
+      </span>`).join('');
+
+    showAiOutput(`<div style="margin-bottom:8px;font-size:12px;color:var(--muted);">Click a tag to add it:</div>${suggestHtml}`);
+
+  } catch (err) {
+    showAiOutput(`❌ Error: ${err.message}`);
+  } finally {
+    setAiLoading('aiTagsBtn', false);
+  }
+}
+
+//APPLY SUGGESTED TAG 
+function applySuggestedTag(tag) {
+  const val = tag.toLowerCase().replace(/\s+/g, '-');
+  if (currentTags.includes(val)) return;
+  if (currentTags.length >= 5)   { alert('Max 5 tags per note.'); return; }
+  currentTags.push(val);
+  renderTagsPreview();
+}
 
 // AI REWRITE (placeholder for commit #14) 
 async function aiRewrite() {}
