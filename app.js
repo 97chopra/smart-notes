@@ -259,17 +259,209 @@ function togglePin(id) {
   }
 }
 
-//DELETE 
-function askDelete(id) {
-  console.log('delete', id); 
-}
+//MODAL STATE 
+let editingId     = null;
+let currentTags   = [];
+let selectedColor = 'none';
 
-// MODAL 
+// OPEN MODAL 
 function openModal(id) {
-  console.log('open', id);   
+  editingId     = id || null;
+  currentTags   = [];
+  selectedColor = 'none';
+
+  document.getElementById('modalTitle').textContent = id ? 'Edit Note' : 'New Note';
+  document.getElementById('noteTitle').value        = '';
+  document.getElementById('noteContent').value      = '';
+  document.getElementById('tagsPreview').innerHTML  = '';
+  document.getElementById('aiOutput').classList.add('hidden');
+
+  // if editing, populate fields
+  if (id) {
+    const note = notes.find(n => n.id === id);
+    if (note) {
+      document.getElementById('noteTitle').value   = note.title;
+      document.getElementById('noteContent').value = note.content;
+      currentTags   = [...note.tags];
+      selectedColor = note.color || 'none';
+      renderTagsPreview();
+    }
+  }
+
+  // reset to write tab
+  switchTab('write');
+  buildColorPicker();
+
+  document.getElementById('noteModal').classList.add('open');
+  setTimeout(() => document.getElementById('noteTitle').focus(), 50);
 }
 
-// EVENT LISTENERS 
+//  CLOSE MODAL 
+function closeModal() {
+  document.getElementById('noteModal').classList.remove('open');
+  editingId = null;
+}
+
+// SAVE NOTE
+function saveNote() {
+  const title   = document.getElementById('noteTitle').value.trim();
+  const content = document.getElementById('noteContent').value.trim();
+
+  if (!title && !content) {
+    alert('Please add a title or some content.');
+    return;
+  }
+
+  if (editingId) {
+    // update existing
+    const note    = notes.find(n => n.id === editingId);
+    note.title    = title;
+    note.content  = content;
+    note.color    = selectedColor;
+    note.tags     = currentTags;
+    note.updatedAt = Date.now();
+  } else {
+    // create new
+    notes.unshift({
+      id:        genId(),
+      title,
+      content,
+      color:     selectedColor,
+      tags:      currentTags,
+      pinned:    false,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    });
+  }
+
+  saveNotes();
+  closeModal();
+  renderNotes();
+}
+
+//  COLOR PICKER 
+function buildColorPicker() {
+  const picker = document.getElementById('colorPicker');
+  picker.innerHTML = NOTE_COLORS.map(c => {
+    const bg       = c.hex || 'var(--surface3)';
+    const selected = selectedColor === c.name ? 'selected' : '';
+    const border   = c.hex ? '' : 'border: 2px dashed var(--border2);';
+    return `<div class="color-swatch ${selected}"
+      style="background:${bg};${border}"
+      data-color="${c.name}"
+      title="${c.name}">
+    </div>`;
+  }).join('');
+
+  picker.querySelectorAll('.color-swatch').forEach(swatch => {
+    swatch.addEventListener('click', () => {
+      selectedColor = swatch.dataset.color;
+      buildColorPicker();
+    });
+  });
+}
+
+//  TAGS 
+function addTag() {
+  const input = document.getElementById('tagInput');
+  const val   = input.value.trim().toLowerCase().replace(/\s+/g, '-');
+
+  if (!val) return;
+  if (currentTags.includes(val)) { input.value = ''; return; }
+  if (currentTags.length >= 5)   { alert('Max 5 tags per note.'); return; }
+
+  currentTags.push(val);
+  input.value = '';
+  renderTagsPreview();
+}
+
+function removeTag(tag) {
+  currentTags = currentTags.filter(t => t !== tag);
+  renderTagsPreview();
+}
+
+function renderTagsPreview() {
+  const wrap = document.getElementById('tagsPreview');
+  wrap.innerHTML = currentTags.map(tag => {
+    const c = getTagColor(tag);
+    return `<span class="tag-preview-chip"
+      style="background:${hexToRgba(c, 0.15)};color:${c};"
+      data-tag="${tag}">
+      ${tag} ✕
+    </span>`;
+  }).join('');
+
+  wrap.querySelectorAll('.tag-preview-chip').forEach(chip => {
+    chip.addEventListener('click', () => removeTag(chip.dataset.tag));
+  });
+}
+
+//  EDITOR TABS 
+function switchTab(tab) {
+  const content  = document.getElementById('noteContent');
+  const preview  = document.getElementById('notePreview');
+  const tabBtns  = document.querySelectorAll('.tab-btn');
+
+  tabBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
+
+  if (tab === 'preview') {
+    const raw        = document.getElementById('noteContent').value;
+    preview.innerHTML = marked.parse(raw || '_Nothing to preview yet._');
+    content.classList.add('hidden');
+    preview.classList.remove('hidden');
+  } else {
+    content.classList.remove('hidden');
+    preview.classList.add('hidden');
+  }
+}
+
+//  DELETE 
+let deleteTargetId = null;
+
+function askDelete(id) {
+  deleteTargetId = id;
+  document.getElementById('confirmModal').classList.add('open');
+}
+
+function confirmDelete() {
+  if (!deleteTargetId) return;
+  notes         = notes.filter(n => n.id !== deleteTargetId);
+  deleteTargetId = null;
+  saveNotes();
+  closeConfirmModal();
+  renderNotes();
+}
+
+function closeConfirmModal() {
+  document.getElementById('confirmModal').classList.remove('open');
+  deleteTargetId = null;
+}
+
+//MODAL EVENT LISTENERS
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('cancelBtn').addEventListener('click', closeModal);
+document.getElementById('saveBtn').addEventListener('click', saveNote);
+
+document.getElementById('addTagBtn').addEventListener('click', addTag);
+document.getElementById('tagInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); addTag(); }
+});
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDelete);
+document.getElementById('cancelDeleteBtn').addEventListener('click', closeConfirmModal);
+
+document.getElementById('noteModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('noteModal')) closeModal();
+});
+document.getElementById('confirmModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('confirmModal')) closeConfirmModal();
+});
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+
+//MAIN EVENT LISTENERS 
 document.getElementById('searchInput').addEventListener('input', renderNotes);
 document.getElementById('sortSelect').addEventListener('change', renderNotes);
 document.getElementById('newNoteBtn').addEventListener('click', () => openModal(null));
@@ -281,6 +473,6 @@ document.querySelectorAll('.nav-item').forEach(item => {
   });
 });
 
-// INIT 
+//INIT
 loadNotes();
 renderNotes();
