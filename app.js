@@ -55,8 +55,10 @@ function escHtml(str) {
 //LOCALSTORAGE
 function loadNotes() {
   try {
-    notes = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const stored = localStorage.getItem(STORAGE_KEY);
+    notes = stored ? JSON.parse(stored) : [];
   } catch (e) {
+    console.warn('Could not load notes from localStorage:', e);
     notes = [];
   }
   if (notes.length === 0) seedDemoNotes();
