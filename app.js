@@ -495,7 +495,16 @@ document.querySelectorAll('.nav-item').forEach(item => {
     setFilter(item.dataset.filter, labels[item.dataset.filter]);
   });
 });
-
+// export button placeholder
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const title   = document.getElementById('noteTitle').value || 'note';
+  const content = document.getElementById('noteContent').value;
+  const blob    = new Blob([content], { type: 'text/plain' });
+  const a       = document.createElement('a');
+  a.href        = URL.createObjectURL(blob);
+  a.download    = `${title}.txt`;
+  a.click();
+});
 //INIT
 loadNotes();
 renderNotes();
