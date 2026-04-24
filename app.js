@@ -485,6 +485,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 document.getElementById('aiSummariseBtn').addEventListener('click', aiSummarise);
 document.getElementById('aiTagsBtn').addEventListener('click', aiSuggestTags);
+document.getElementById('aiRewriteBtn').addEventListener('click', aiRewrite);
 
 //MAIN EVENT LISTENERS 
 

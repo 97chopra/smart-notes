@@ -139,5 +139,58 @@ function applySuggestedTag(tag) {
   renderTagsPreview();
 }
 
-// AI REWRITE (placeholder for commit #14) 
-async function aiRewrite() {}
+//AI REWRITE 
+async function aiRewrite() {
+  const content = document.getElementById('noteContent').value.trim();
+
+  if (!content) {
+    alert('Please write some content first!');
+    return;
+  }
+
+  setAiLoading('aiRewriteBtn', true);
+
+  try {
+    const prompt = `Improve the following note by fixing grammar, improving clarity and making it more concise. 
+Keep the same meaning and structure.
+Return ONLY the improved text, no preamble or explanation:
+
+${content}`;
+
+    const result = await callGroq(prompt);
+
+    // show result with apply button
+    showAiOutput(`
+      <div style="margin-bottom:10px;font-size:12px;color:var(--muted);">
+        Improved version — click Apply to replace your note:
+      </div>
+      <div style="font-size:13.5px;line-height:1.7;color:var(--text);
+        background:var(--surface3);padding:12px;border-radius:8px;margin-bottom:12px;">
+        ${result}
+      </div>
+      <button onclick="applyRewrite(\`${result.replace(/`/g, '\\`')}\`)"
+        style="background:var(--accent);border:none;border-radius:8px;
+        color:#fff;padding:8px 18px;cursor:pointer;font-size:13px;font-weight:600;">
+        ✓ Apply to Note
+      </button>
+    `);
+
+  } catch (err) {
+    showAiOutput(`❌ Error: ${err.message}`);
+  } finally {
+    setAiLoading('aiRewriteBtn', false);
+  }
+}
+
+//APPLY REWRITE 
+function applyRewrite(newContent) {
+  document.getElementById('noteContent').value = newContent;
+  document.getElementById('aiOutput').classList.add('hidden');
+
+  // flash the textarea to show it was updated
+  const textarea = document.getElementById('noteContent');
+  textarea.style.borderColor = 'var(--accent)';
+  setTimeout(() => {
+    textarea.style.borderColor = '';
+  }, 1000);
+}
